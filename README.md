@@ -39,7 +39,8 @@ http://127.0.0.1/api/docs/
 Собираем контейнерыы:
 Из папки infra/ разверните контейнеры при помощи docker-compose:
 
-```docker-compose up -d --build 
+```
+docker-compose up -d --build 
 ```
 Выполните миграции:
 
