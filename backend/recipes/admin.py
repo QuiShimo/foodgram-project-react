@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from recipes.models import (Favorite, Ingredient, IngredientRecipe,
-                            Recipe, ShoppingCart, Tag)
+from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
+                            ShoppingCart, Tag)
 
 
 class IngredientInline(admin.TabularInline):
@@ -31,7 +31,7 @@ class RecipeAdmin(admin.ModelAdmin):
 
 
 class IngredientAdmin(admin.ModelAdmin):
-    """ Админ панель управление ингридиентами """
+    """ Админ панель управление ингредиентами """
     list_display = ('name', 'measurement_unit',)
     search_fields = ('name',)
     list_filter = ('name',)

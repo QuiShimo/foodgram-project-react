@@ -2,7 +2,7 @@ from django.conf import settings
 from django.db import transaction
 from django.db.models import F
 from django.shortcuts import get_object_or_404
-from djoser.serializers import UserSerializer, UserCreateSerializer
+from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
@@ -40,6 +40,7 @@ class UserCreateSerializer(UserCreateSerializer):
         fields = (
             'email', 'username', 'first_name',
             'last_name', 'password')
+
 
 class SubscribeListSerializerMy(UserSerializer):
     """ Сериализатор для получения подписок """
@@ -131,11 +132,10 @@ class RecipeReadSerializer(serializers.ModelSerializer):
                   )
 
     def get_ingredients(self, recipe):
-        ingredients = recipe.ingredients.values(
+        return recipe.ingredients.values(
             'id', 'name', 'measurement_unit',
             amount=F('ingredientrecipe__amount')
         )
-        return ingredients
 
     def get_is_favorited(self, obj):
         request = self.context.get('request')
