@@ -9,7 +9,7 @@ services:
       - .env
 
   backend:
-    image: quishimo/backend:latest
+    image: quishimo/backend:v1.1.8
     volumes:
       - static_value:/app/static/
       - media_value:/app/media/

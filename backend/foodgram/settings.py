@@ -8,9 +8,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.getenv('TOKEN', 'default-value')
 
-DEBUG = os.getenv('DEBUG', default=False)
+DEBUG = True
 
-ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS', default='*')]
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(' ')
 
 AUTH_USER_MODEL = 'users.User'
 
@@ -62,26 +62,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
-
-if DEBUG:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
+        'NAME': os.getenv('DB_NAME', default='postgres'),
+        'USER': os.getenv('POSTGRES_USER', default='postgres'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='postgres'),
+        'HOST': os.getenv('DB_HOST', default='localhost'),
+        'PORT': os.getenv('DB_PORT', default='5432')
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
-            'NAME': os.getenv('DB_NAME', default='postgres'),
-            'USER': os.getenv('POSTGRES_USER', default='postgres'),
-            'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='postgres'),
-            'HOST': os.getenv('DB_HOST', default='localhost'),
-            'PORT': os.getenv('DB_PORT', default='5432')
-        }
-    }
-
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -138,8 +128,15 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-LENGTH_OF_FIELDS_USER_1 = 150
+MAX_LENGTH_FIRST_NAME = 40
+MAX_LENGTH_LAST_NAME = 50
+MAX_LENGTH_EMAIL = 50
+MAX_LENGTH_USERNAME = 70
 
-LENGTH_OF_FIELDS_USER_2 = 254
+MAX_LENGTH_OF_FIELDS_RECIPES = 200
 
-LENGTH_OF_FIELDS_RECIPES = 200
+MIN_COOKING_TIME = 1
+MIN_AMOUNT_VALUE = 1
+
+FILE_NAME_SHOP_LIST = 'shopping_list.txt'
+CONTENT_TYPE = 'text/plain'

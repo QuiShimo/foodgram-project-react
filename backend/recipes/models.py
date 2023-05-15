@@ -1,7 +1,6 @@
 from colorfield.fields import ColorField
 from django.conf import settings
-from django.core.validators import (MaxValueValidator, MinValueValidator,
-                                    RegexValidator)
+from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 from django.db.models import UniqueConstraint
 
@@ -9,26 +8,26 @@ from users.models import User
 
 
 class Ingredient(models.Model):
-    """ Модель ингридиентов. """
+    """ Модель ингредиентов. """
     name = models.CharField(
-        max_length=settings.LENGTH_OF_FIELDS_RECIPES,
-        verbose_name='Название ингридиента',
-        db_index=True
+        max_length=settings.MAX_LENGTH_OF_FIELDS_RECIPES,
+        verbose_name='Название ингредиента',
+        db_index=True,
     )
     measurement_unit = models.CharField(
-        max_length=settings.LENGTH_OF_FIELDS_RECIPES,
-        verbose_name='Еденицы измерения'
+        max_length=settings.MAX_LENGTH_OF_FIELDS_RECIPES,
+        verbose_name='Единицы измерения',
     )
 
-    class Meta():
-        verbose_name = 'Ингридиенты'
-        verbose_name_plural = 'Ингридиенты'
-        constraints = [
+    class Meta:
+        verbose_name = 'Ингредиент'
+        verbose_name_plural = 'Ингредиенты'
+        constraints = (
             models.UniqueConstraint(
-                fields=['name', 'measurement_unit'],
+                fields=('name', 'measurement_unit',),
                 name='unique_name_measurement_unit'
-            )
-        ]
+            ),
+        )
 
     def __str__(self):
         return f'{self.name}, {self.measurement_unit}'
@@ -38,26 +37,26 @@ class Tag(models.Model):
     """ Модель тегов."""
     name = models.CharField(
         verbose_name='Название тега',
-        max_length=settings.LENGTH_OF_FIELDS_RECIPES,
+        max_length=settings.MAX_LENGTH_OF_FIELDS_RECIPES,
         db_index=True,
-        unique=True
+        unique=True,
     )
     color = ColorField(
         verbose_name='HEX-код',
         format='hex',
         max_length=7,
         unique=True,
-        validators=[
+        validators=(
             RegexValidator(
                 regex="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$",
                 message='Проверьте вводимый формат',
-            )
-        ],
+            ),
+        ),
     )
     slug = models.SlugField(
-        max_length=settings.LENGTH_OF_FIELDS_RECIPES,
+        max_length=settings.MAX_LENGTH_OF_FIELDS_RECIPES,
         verbose_name='Slug',
-        unique=True
+        unique=True,
     )
 
     class Meta:
@@ -75,37 +74,41 @@ class Recipe(models.Model):
         User,
         verbose_name='Автор рецепта',
         on_delete=models.CASCADE,
-        related_name='recipes'
+        related_name='recipes',
     )
     name = models.CharField(
         verbose_name='Название рецепта',
-        max_length=settings.LENGTH_OF_FIELDS_RECIPES,
+        max_length=settings.MAX_LENGTH_OF_FIELDS_RECIPES,
     )
     image = models.ImageField(
         upload_to='recipes/image/',
-        verbose_name='Изображение'
+        verbose_name='Изображение',
     )
     text = models.TextField(verbose_name='Описание')
     ingredients = models.ManyToManyField(
         Ingredient,
         verbose_name='Ингридиенты',
-        through='IngredientRecipe'
+        through='IngredientRecipe',
     )
     tags = models.ManyToManyField(
         Tag,
-        verbose_name='Теги'
+        verbose_name='Теги',
     )
     cooking_time = models.PositiveSmallIntegerField(
         verbose_name='Время готовки',
-        validators=[MinValueValidator(
-            1, message='Время приготовления не менее 1 минуты!'
-        ), MaxValueValidator(
-            1441, message='Время приготовления не более 24 часов!'
-        )]
+        validators=(
+            MinValueValidator(
+                settings.MIN_COOKING_TIME,
+                message=(
+                    f'Время приготовления не менее '
+                    f'{settings.MIN_COOKING_TIME} минуты!'
+                )
+            ),
+        )
     )
     pub_date = models.DateTimeField(
         verbose_name='Дата публикации',
-        auto_now_add=True
+        auto_now_add=True,
     )
 
     class Meta:
@@ -133,19 +136,19 @@ class FavoriteShoppingCart(models.Model):
 
     class Meta:
         abstract = True
-        constraints = [
+        constraints = (
             UniqueConstraint(
-                fields=('user', 'recipe'),
-                name='%(app_label)s_%(class)s_unique'
-            )
-        ]
+                fields=('user', 'recipe',),
+                name='%(app_label)s_%(class)s_unique',
+            ),
+        )
 
     def __str__(self):
         return f'{self.user} :: {self.recipe}'
 
 
 class Favorite(FavoriteShoppingCart):
-    """ Модель добавление в избраное. """
+    """ Модель добавление в избранное. """
 
     class Meta(FavoriteShoppingCart.Meta):
         default_related_name = 'favorites'
@@ -167,26 +170,26 @@ class IngredientRecipe(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
-        verbose_name='Ингредиент'
+        verbose_name='Ингредиент',
     )
     recipe = models.ForeignKey(
         Recipe,
         verbose_name='Рецепт',
         on_delete=models.CASCADE,
-        related_name='ingredienttorecipe'
+        related_name='ingredienttorecipe',
     )
     amount = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(1)],
-        verbose_name='Количество ингредиента'
+        validators=(MinValueValidator(settings.MIN_AMOUNT_VALUE),),
+        verbose_name='Количество ингредиента',
     )
 
     class Meta:
         ordering = ('-id', )
-        verbose_name = 'Ингредиент'
+        verbose_name = 'Ингредиент рецепта'
         verbose_name_plural = 'Ингредиенты рецепта'
 
     def __str__(self):
         return (
-            f'{self.ingredient.name} :: {self.ingredient.measurement_unit}'
-            f' - {self.amount} '
+            f'{self.ingredient.name} :: {self.ingredient.measurement_unit} '
+            f'- {self.amount}'
         )

@@ -11,22 +11,22 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ('username', 'first_name', 'last_name', )
     first_name = models.CharField(
         verbose_name='Имя',
-        max_length=settings.LENGTH_OF_FIELDS_USER_1
+        max_length=settings.MAX_LENGTH_FIRST_NAME,
     )
     last_name = models.CharField(
-        max_length=settings.LENGTH_OF_FIELDS_USER_1,
+        max_length=settings.MAX_LENGTH_LAST_NAME,
         verbose_name='Фамилия',
     )
     email = models.EmailField(
-        max_length=settings.LENGTH_OF_FIELDS_USER_1,
+        max_length=settings.MAX_LENGTH_EMAIL,
         verbose_name='email',
-        unique=True
+        unique=True,
     )
     username = models.CharField(
         verbose_name='username',
-        max_length=settings.LENGTH_OF_FIELDS_USER_2,
+        max_length=settings.MAX_LENGTH_USERNAME,
         unique=True,
-        validators=(UnicodeUsernameValidator(), )
+        validators=(UnicodeUsernameValidator(), ),
     )
 
     class Meta:
@@ -50,21 +50,21 @@ class Follow(models.Model):
         User,
         on_delete=models.CASCADE,
         verbose_name='Подписчик',
-        related_name='following'
+        related_name='following',
     )
 
     class Meta:
         ordering = ('-id', )
-        constraints = [
+        constraints = (
             UniqueConstraint(
                 fields=('user', 'author'),
-                name='unique_follow'
+                name='unique_follow',
             ),
             models.CheckConstraint(
                 check=~Q(user=F('author')),
-                name='no_self_follow'
+                name='no_self_follow',
             )
-        ]
+        )
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
 
