@@ -8,7 +8,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.getenv('TOKEN', 'default-value')
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(' ')
 
@@ -139,4 +139,3 @@ MIN_COOKING_TIME = 1
 MIN_AMOUNT_VALUE = 1
 
 FILE_NAME_SHOP_LIST = 'shopping_list.txt'
-CONTENT_TYPE = 'text/plain'

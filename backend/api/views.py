@@ -21,6 +21,8 @@ from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
                             ShoppingCart, Tag)
 from users.models import Follow, User
 
+CONTENT_TYPE = 'text/plain'
+
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     """ Вывод ингредиентов """
@@ -62,12 +64,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 f"\n{ingredient['ingredient__name']} "
                 f"({ingredient['ingredient__measurement_unit']}) - "
                 f"{ingredient['amount']}")
-        file = settings.FILE_NAME_SHOP_LIST
         response = HttpResponse(
             shopping_list,
-            content_type=settings.CONTENT_TYPE,
+            content_type=CONTENT_TYPE,
         )
-        response['Content-Disposition'] = f'attachment; filename="{file}.txt"'
+        response['Content-Disposition'] = (
+            f'attachment; filename="{settings.FILE_NAME_SHOP_LIST}.txt"'
+        )
         return response
 
     @action(detail=False, methods=('GET',))
