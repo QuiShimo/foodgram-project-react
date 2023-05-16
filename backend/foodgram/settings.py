@@ -10,7 +10,7 @@ SECRET_KEY = os.getenv('TOKEN', 'default-value')
 
 DEBUG = False
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(' ')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', default='*').split(' ')
 
 AUTH_USER_MODEL = 'users.User'
 
