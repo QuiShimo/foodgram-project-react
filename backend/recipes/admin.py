@@ -14,8 +14,8 @@ class IngredientInline(admin.TabularInline):
 class RecipeAdmin(admin.ModelAdmin):
     list_display = ('author', 'name', 'cooking_time',
                     'get_favorites', 'get_ingredients',)
-    search_fields = ('name', 'author', 'tags',)
-    list_filter = ('author', 'name', 'tags',)
+    search_fields = ('author__username', 'author__email', 'name')
+    list_filter = ('tags',)
     inlines = (IngredientInline,)
     empty_value_display = '-пусто-'
 
@@ -47,18 +47,19 @@ class TagAdmin(admin.ModelAdmin):
 
 
 class FavoriteAdmin(admin.ModelAdmin):
-    """ Админ панель управление подписками """
-    list_display = ('user', 'recipe',)
-    list_filter = ('user', 'recipe',)
-    search_fields = ('user', 'recipe',)
+    """ Админ панель управление избранным """
+    list_display = ('user', 'recipe')
+    list_filter = ('recipe__tags',)
+    search_fields = ('user__username', 'user__email', 'recipe__name')
     empty_value_display = '-пусто-'
+
 
 
 class ShoppingCartAdmin(admin.ModelAdmin):
     """ Админ панель списка покупок """
     list_display = ('recipe', 'user',)
-    list_filter = ('recipe', 'user',)
-    search_fields = ('user',)
+    list_filter = ('recipe__tags',)
+    search_fields = ('user__username', 'user__email', 'recipe__name')
     empty_value_display = '-пусто-'
 
 

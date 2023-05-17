@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from users.models import User
+from users.models import Follow, User
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -11,4 +11,12 @@ class UserAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 
+class FollowAdmin(admin.ModelAdmin):
+    list_display = ('user', 'author')
+    search_fields = (
+        'user__username', 'user__email', 'author__username', 'author__email'
+    )
+
+
 admin.site.register(User, UserAdmin)
+admin.site.register(Follow, FollowAdmin)
