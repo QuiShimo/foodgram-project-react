@@ -54,7 +54,6 @@ class FavoriteAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 
-
 class ShoppingCartAdmin(admin.ModelAdmin):
     """ Админ панель списка покупок """
     list_display = ('recipe', 'user',)
