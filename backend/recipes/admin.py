@@ -34,7 +34,7 @@ class IngredientAdmin(admin.ModelAdmin):
     """ Админ панель управление ингредиентами """
     list_display = ('name', 'measurement_unit',)
     search_fields = ('name',)
-    list_filter = ('name',)
+    list_filter = ('measurement_unit',)
     empty_value_display = '-пусто-'
 
 
